@@ -62,25 +62,52 @@ const useStyles = makeStyles((theme) => ({
     const classes = useStyles();
     const [blogs, setBlogs] = useState([]);
   
-    useEffect(() => {
-      const fetchTrendingBlogs = async () => {
-        try {
-          const response = await axios.get('https://newsapi.org/v2/everything', {
-            params: {
-              q: 'health fitness sports',
-              language: 'en',
-              sortBy: 'popularity',
-              apiKey: '792d4efb419f4ac49d8e9da7402eb0fb', // Replace with your News API key
-            },
-          });
-          setBlogs(response.data.articles);
-        } catch (error) {
-          console.log(error);
-        }
-      };
+    // useEffect(() => {
+    //   const fetchTrendingBlogs = async () => {
+    //     try {
+    //       const response = await axios.get('https://newsapi.org/v2/everything', {
+    //         params: {
+    //           q: 'health fitness sports',
+    //           language: 'en',
+    //           sortBy: 'popularity',
+    //           apiKey: '792d4efb419f4ac49d8e9da7402eb0fb', // Replace with your News API key
+    //         },
+    //       });
+    //       setBlogs(response.data.articles);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
   
-      fetchTrendingBlogs();
-    }, []);
+    //   fetchTrendingBlogs();
+    // }, []);
+
+    
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        // Replace 'YOUR_API_KEY' with your actual Guardian API key
+        const apiKey = '9e2963f7-f605-4557-8850-3d4b8ba876d4';
+        const section = 'sport'; // Replace with the desired section (e.g., 'sport', 'fitness')
+
+        const response = await fetch(
+          `https://content.guardianapis.com/search?api-key=${apiKey}&section=${section}&order-by=newest`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setBlogs(data.response.results);
+          console.log(data)
+        } else {
+          console.error('Failed to fetch blogs');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
   
     const handleRefresh = () => {
       window.location.reload(); // Refresh the page
@@ -97,12 +124,12 @@ const useStyles = makeStyles((theme) => ({
               <div key={blog.title} className={classes.blogContainer}>
                 <div className={classes.blogCard}>
                   <Typography variant="h5" component="h2" className={classes.blogTitle}>
-                    {blog.title}
+                    {blog.webTitle}
                   </Typography>
                   <Typography variant="body1" className={classes.blogDescription}>
                     {blog.description}
                   </Typography>
-                  <a href={blog.url} target="_blank" rel="noopener noreferrer" className={classes.readMoreLink}>
+                  <a href={blog.webUrl} target="_blank" rel="noopener noreferrer" className={classes.readMoreLink}>
                     Read More
                   </a>
                 </div>
